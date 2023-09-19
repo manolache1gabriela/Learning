@@ -16,7 +16,7 @@ export default function Joke() {
     error,
     isSuccess,
   } = useQuery(['joke'], fetchJoke, {
-    staleTime: 6000,
+    // staleTime: 6000,
     refetchOnWindowFocus: false
   });
 
