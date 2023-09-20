@@ -1,11 +1,11 @@
-// import './reset.css';
 import { Link } from 'react-router-dom';
 import './App.css';
+import './github-markdown.css'
 import {useQuery} from 'react-query'
 import IconOpen from './IconOpen';
 import IconClosed from './IconClosed';
 import { useState } from 'react';
-import { formatDistance, subDays } from 'date-fns'
+import { formatDistance } from 'date-fns'
 
 function App() {
 
@@ -13,7 +13,7 @@ function App() {
 
   const {data: issues, isSuccess, isLoading} = useQuery(['issues', filter], fetchIssues) 
   function fetchIssues(){
-    return fetch(`https://api.github.com/search/issues?q=repo:facebook/create-react-app+type:issue+state:${filter}`).then(response => response.json())
+    return fetch(`https://api.github.com/repos/facebook/create-react-app/issues?per_page=10&state=${filter}`).then(response => response.json())
   }
 
   const {data: issuesOpen, isSuccess: isSuccessIssuesOpen} = useQuery(['issuesOpen'], fetchIssuesOpened) 
@@ -35,7 +35,7 @@ function App() {
     {isSuccess&& 
       <div className="issues-container">
         <div className="issues-heading">
-          <a href="#">facebook / create-react-app</a>
+          <a href="https://github.com/facebook/create-react-app">facebook / create-react-app</a>
           <div className="open-closed-buttons">
             <button onClick={()=> setFilter('open')}>
               <IconOpen/>
@@ -52,13 +52,13 @@ function App() {
           </div>
         </div>
         <div className="issues-table">
-          {issues.items.map(issue => (
+          {issues.map(issue => (
             <div key={issue.number} className="issues-entry">
               <div className="issues-entry-title-container">
                 {issue.state === 'open' && <IconOpen />}
                 {issue.state === 'closed' && <IconClosed />}
                 <div className="issues-title">
-                  <Link to={`/issues/1`}>
+                  <Link to={`/issues/${issue.number}`}>
                     {issue.title}
                   </Link>
                   <div className="issues-title-details">
@@ -67,7 +67,7 @@ function App() {
                 </div>
               </div>
               {issue.comments > 0 && 
-              <Link to={`/issues/1`} className="comments-count-container">
+              <Link to={`/issues/${issue.number}`} className="comments-count-container">
                 <svg
                   className="octicon octicon-comment v-align-middle"
                   viewBox="0 0 16 16"
